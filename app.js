@@ -7,7 +7,7 @@ class App {
     bindButtonListener() {
         const button = document.querySelector("button");
         button.addEventListener('click', () => {
-            console.log('Button clicked');
+            this.saveToStorage();
         });
     }
 
