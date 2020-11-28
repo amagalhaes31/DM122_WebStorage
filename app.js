@@ -1,40 +1,49 @@
-class App {
+import {
+    set as setItem,
+    get as getItem,
+    keys as getKeys,
+  } from "https://cdn.jsdelivr.net/npm/idb-keyval@3/dist/idb-keyval.mjs";
+  
+  class App {
     constructor() {
-        console.log("Initialized ...");
-        this.bindButtonListener();
-        this.listStorageValues();
+      console.log("Initialized ...");
+      this.bindButtonListener();
+      this.listStorageValues();
     }
-
+  
     bindButtonListener() {
-        const button = document.querySelector("button");
-        button.addEventListener('click', () => {
-            this.saveToStorage();
-        });
+      const button = document.querySelector("button");
+      button.addEventListener("click", () => {
+        this.saveToStorage();
+      });
     }
-
+  
     saveToStorage() {
-        const keyInput = document.getElementById('key');
-        const valueInput = document.getElementById('value');
-
-        if (keyInput.value && valueInput.value){
-            localStorage.setItem(keyInput.value, valueInput.value);
+      const keyInput = document.getElementById("key");
+      const valueInput = document.getElementById("value");
+  
+      if (keyInput.value && valueInput.value) {
+        setItem(keyInput.value, valueInput.value)
+          .then(() => {
             this.listStorageValues();
-        }
+          });
+      }
     }
-
-    listStorageValues() {
-        const storageValues = document.getElementById('storageValues');
-        const toHtml = key => {
-            const value = localStorage.getItem(key);
-            return `<p>${key}: ${value}</p>`
-        }
-        const htmlOutput = Object.keys(localStorage)
-            .sort()          // Alphabetical order
-            .map(toHtml)
-            .join("");      // Array concatenate
-
-        storageValues.innerHTML = htmlOutput;
+  
+    async listStorageValues() {
+      const storageValues = document.getElementById("storageValues");
+  
+      const toHtml = async (key) => {
+        const value = await getItem(key);
+        console.log(value);
+        return `<p>${key}: ${value}</p>`;
+      };
+  
+      const keys = await getKeys();
+      const htmlOutput = await Promise.all(keys.map(toHtml));
+  
+      storageValues.innerHTML = htmlOutput.join('');
     }
-}
-
-new App();
+  }
+  
+  new App();
